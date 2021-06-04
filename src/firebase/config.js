@@ -1,8 +1,8 @@
 export const firebaseConfig = {
-  apiKey: "AIzaSyDOmsl1FJiNGcI_dbCqDIezPnmmh1XKGns",
-  authDomain: "trading-journal-948a7.firebaseapp.com",
-  projectId: "trading-journal-948a7",
-  storageBucket: "trading-journal-948a7.appspot.com",
-  messagingSenderId: "812735562363",
-  appId: "1:812735562363:web:f130462ee19878577358de",
-};
+    apiKey: "AIzaSyBYGdPoF1rlk6Qd42daxXgnwpabq7AHNm4",
+    authDomain: "trading-journal-app-4222e.firebaseapp.com",
+    projectId: "trading-journal-app-4222e",
+    storageBucket: "trading-journal-app-4222e.appspot.com",
+    messagingSenderId: "255422496794",
+    appId: "1:255422496794:web:073e6aa91e14a2fdf651a3"
+  };

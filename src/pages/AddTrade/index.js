@@ -194,7 +194,7 @@ const AddTrade = () => {
             <div className="col-10">
               <label className="label">Type *:</label>
               <Select
-                list={["Forex", "Crypto"]}
+                list={["Forex", "Crypto", "Market", "Call", "Put"]}
                 selected={type.value}
                 handler={onTypeChange}
               />
