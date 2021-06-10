@@ -35,9 +35,11 @@ const AddTrade = () => {
     error: false,
   });
   const [quantity, setQuantity] = useState("");
-  const [entryPrice, setEntryPrice] = useState("");
-  const [exitPrice, setExitPrice] = useState("");
+  const [price, setPrice] = useState("");
   const [stopLoss, setStopLoss] = useState("");
+  const [takeProfit, setTakeProfit] = useState("");
+  const [strikePrice, setStrikePrice] = useState("");
+  const [expiry, setExpiry] = useState(new Date());
   const [net, setNet] = useState("");
   const [imgUrl, setImgUrl] = useState("");
   const [notes, setNotes] = useState("");
@@ -46,6 +48,8 @@ const AddTrade = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const history = useHistory();
+
+  const isOption = (type) => type === "Call" || type === "Put";
 
   const handleTagsChange = (newTags) =>
     setTags((prev) => ({ ...prev, arr: [...newTags].sort(), error: false }));
@@ -57,8 +61,8 @@ const AddTrade = () => {
     return isNaN(value) || value < 0 ? 0 : parseFloat(value);
   };
 
-  const validateProfit = (value) => {
-    return isNaN(value) ? 0 : parseFloat(value);
+  const validatePrice = (value) => {
+    return !isNaN(value) ? parseFloat(value) : 0;
   };
 
   const handleSubmit = (e) => {
@@ -78,10 +82,12 @@ const AddTrade = () => {
       side,
       symbol,
       quantity: validateNumber(quantity),
-      entryPrice: validateNumber(entryPrice),
-      exitPrice: validateNumber(exitPrice),
+      price: validatePrice(price),
       stopLoss: validateNumber(stopLoss),
-      net: validateProfit(net),
+      takeProfit: validateNumber(takeProfit),
+      strikePrice: validateNumber(strikePrice),
+      expiry,
+      net: validatePrice(price),
       imgUrl,
       notes,
       type: type.value,
@@ -96,17 +102,17 @@ const AddTrade = () => {
 
   const clearForm = () => {
     setSide("Buy");
-    setStopLoss("");
+    setTakeProfit("");
     setSymbol("");
     setTags({
       arr: [],
       error: false,
     });
     setQuantity("");
-    setEntryPrice("");
+    setPrice("");
     setImgUrl("");
-    setExitPrice("");
     setStopLoss("");
+    setStrikePrice("");
     setNotes("");
     setNet("");
   };
@@ -121,13 +127,14 @@ const AddTrade = () => {
       onChange(trade.date);
       setSide(trade.side);
       setStopLoss(trade.stopLoss);
+      setTakeProfit(trade.takeProfit);
+      setStrikePrice(trade.strikePrice);
+      setExpiry(trade.expiry);
       setSymbol(trade.symbol);
       setTags((prev) => ({ ...prev, arr: [...trade.tags] }));
       setQuantity(trade.quantity);
-      setEntryPrice(trade.entryPrice);
+      setPrice(trade.price);
       setImgUrl(trade.imgUrl);
-      setExitPrice(trade.exitPrice);
-      setStopLoss(trade.stopLoss);
       setNotes(trade.notes);
       setNet(trade.net);
       setType((prev) => ({
@@ -152,6 +159,7 @@ const AddTrade = () => {
         </p>
         <div className="col-12 mt-1">
           <form className="add_form" onSubmit={handleSubmit}>
+
             <div className="col-10">
               <label className="label">Trade Side *:</label>
               <div className="row">
@@ -182,6 +190,7 @@ const AddTrade = () => {
                 </div>
               </div>
             </div>
+
             <div className="col-10">
               <Input
                 label="Symbol *:"
@@ -191,22 +200,16 @@ const AddTrade = () => {
                 value={symbol}
               />
             </div>
+
             <div className="col-10">
               <label className="label">Type *:</label>
               <Select
-                list={["Forex", "Crypto", "Market", "Call", "Put"]}
+                list={["Limit", "Market", "Stop", "StopLimit", "Call", "Put"]}
                 selected={type.value}
                 handler={onTypeChange}
               />
             </div>
-            <div className="col-10">
-              <Input
-                label="Quanitity *:"
-                handler={(e) => setQuantity(e.target.value)}
-                required
-                value={quantity}
-              />
-            </div>
+
             <div className="col-10">
               <label className="label">Date *:</label>
               <CalendarInput
@@ -214,31 +217,74 @@ const AddTrade = () => {
                 onChange={onChange}
                 showDate={true}
               />
-              required
             </div>
+
             <div className="col-10">
               <Input
-                label="Entry Price *:"
-                handler={(e) => setEntryPrice(e.target.value)}
+                label="Quanitity *:"
+                type="number"
+                handler={(e) => setQuantity(e.target.value)}
                 required
-                value={entryPrice}
+                value={quantity}
               />
             </div>
+
             <div className="col-10">
               <Input
-                label="Exit Price *:"
-                handler={(e) => setExitPrice(e.target.value)}
+                label="Price *:"
+                type="number"
+                handler={(e) =>
+                  setPrice(
+                    side === "Sell" ? e.target.value : e.target.value * -1
+                  )
+                }
                 required
-                value={exitPrice}
+                value={price}
               />
             </div>
-            <div className="col-10">
-              <Input
-                label="Stop Loss:"
-                handler={(e) => setStopLoss(e.target.value)}
-                value={stopLoss}
-              />
-            </div>
+
+            {isOption(type?.value) &&
+                <>
+                    <div className="col-10">
+                      <Input
+                        label="Strike Price:"
+                        type="number"
+                        handler={(e) => setStrikePrice(e.target.value)}
+                        value={strikePrice}
+                      />
+                    </div>
+                    <div className="col-10">
+                      <label className="label">Expiry:</label>
+                      <CalendarInput
+                        value={expiry}
+                        onChange={setExpiry}
+                        showDate={true}
+                      />
+                    </div>
+                </>
+            }
+
+            {side === "Buy" && (
+              <>
+                <div className="col-10">
+                  <Input
+                    label="Stop Loss:"
+                    type="number"
+                    handler={(e) => setStopLoss(e.target.value)}
+                    value={stopLoss}
+                  />
+                </div>
+                <div className="col-10">
+                  <Input
+                    label="Take Profit:"
+                    type="number"
+                    handler={(e) => setTakeProfit(e.target.value)}
+                    value={takeProfit}
+                  />
+                </div>
+              </>
+            )}
+
             <div className="col-10">
               <Input
                 label="Image Url:"
@@ -246,16 +292,9 @@ const AddTrade = () => {
                 value={imgUrl}
               />
             </div>
+
             <div className="col-10">
-              <Input
-                label="Profit/Loss *:"
-                handler={(e) => setNet(e.target.value)}
-                required
-                value={net}
-              />
-            </div>
-            <div className="col-10">
-              <label className="label">Notes (up to 250 chars):</label>
+              <label className="label">Notes:</label>
               <textarea
                 cols="30"
                 rows="5"
@@ -264,6 +303,7 @@ const AddTrade = () => {
                 value={notes}
               />
             </div>
+
             <div className="col-10">
               <label className="label">Tags (add at least one) *:</label>
               <InputTags
@@ -272,14 +312,17 @@ const AddTrade = () => {
                 error={tags.error}
               />
             </div>
+
             {type.error ? (
               <p className="text-red mt-1">Please pick trade type!</p>
             ) : null}
+
             <div className="col-10 ">
               <Button type="submit" btnStyle="mt-2">
                 Save
               </Button>
             </div>
+
           </form>
         </div>
       </section>

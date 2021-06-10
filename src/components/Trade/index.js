@@ -28,8 +28,11 @@ const Trade = ({ trade, handler, ...otherProps }) => {
       <td className="table_cell">{trade.type}</td>
       <td className="table_cell">{trade.side}</td>
       <td className="table_cell">{trade.quantity}</td>
-      <td className="table_cell">${trade.entryPrice}</td>
-      <td className="table_cell">${trade.stopLoss || ""}</td>
+      <td
+        className={"table_cell " + (trade.price > 0 ? "text-green" : "text-red")}
+      >
+        {trade.price}$
+      </td>
       <td
         className="table_cell pointer"
         onClick={() => setShowNotes(!showNotes)}
@@ -66,11 +69,6 @@ const Trade = ({ trade, handler, ...otherProps }) => {
           </span>
         ))}
         {trade.tags.length > 2 ? <span className="tag_dots">...</span> : null}
-      </td>
-      <td
-        className={"table_cell " + (trade.net > 0 ? "text-green" : "text-red")}
-      >
-        {trade.net}$
       </td>
       <td className="table_cell">
         <Link to={{ pathname: `import/${trade.id}` }} data-tip="Edit Trade">

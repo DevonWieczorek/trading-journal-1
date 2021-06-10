@@ -14,6 +14,18 @@ const mapState = ({ trades }) => ({
   trades: trades.trades,
 });
 
+const cleanPrice = (price) => {
+    if(isNaN(price)) return 0;
+
+    if(price < 0) {
+        price = price * -1;
+        return `-$${price}`;
+    }
+    else {
+        return `$${price}`;
+    }
+}
+
 const InvidualTrade = (props) => {
   const { trades } = useSelector(mapState);
   const dispatch = useDispatch();
@@ -77,9 +89,12 @@ const InvidualTrade = (props) => {
                   />
                 )}
               </div>
+
               <div className="trade_body">
-                <h4 className="trade_header text-grey">{trade.symbol}</h4>
-                <p className="trade_notes">{trade.notes}</p>
+                <h4 className="trade_header text-grey">
+                    {trade.side} {trade.quantity} {trade.symbol} @ ${trade.price >= 0 ? trade.price : trade.price * -1} on {trade.date.toLocaleDateString()}
+                </h4>
+
                 <div className="trade_tags mt-2">
                   {trade.tags.map((tag) => (
                     <span className="tag" key={tag}>
@@ -87,19 +102,32 @@ const InvidualTrade = (props) => {
                     </span>
                   ))}
                 </div>
-                <p className="trade_text mt-2">
-                  Entry Price: ${trade.entryPrice}
-                </p>
-                <p className="trade_text">Exit Price: ${trade.entryPrice}</p>
+
                 <p className="trade_text">
                   Date: {trade.date.toLocaleDateString()}
                 </p>
-                <p className="trade_text ">
-                  Pln:
-                  <span className={trade.net > 0 ? "text-green" : "text-red"}>
-                    ${trade.net}
+
+                <p className="trade_text">
+                  Change:
+                  <span className={trade.price > 0 ? "text-green" : "text-red"}>
+                    {cleanPrice(trade.price)}
                   </span>
                 </p>
+
+                {trade?.quantity && <p className="trade_text">Quanitity: {trade.quantity}</p>}
+
+                {trade?.entryPrice && <p className="trade_text">Entry Price: {cleanPrice(trade.entryPrice)}</p>}
+
+                {trade?.exitPrice && <p className="trade_text">Exit Price: {cleanPrice(trade.exitPrice)}</p>}
+
+                {trade?.strikePrice && <p className="trade_text">Strike Price: {cleanPrice(trade.strikePrice)}</p>}
+
+                <p className="trade_text">
+                  Expiry: <em>TODO: Fix expiry, make same as date</em>
+                </p>
+
+                <p className="trade_notes">{trade.notes}</p>
+
                 <div className="controls mt-2">
                   <Link
                     to={{ pathname: `/import/${trade.id}` }}

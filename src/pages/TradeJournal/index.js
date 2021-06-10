@@ -21,7 +21,7 @@ import { showModal } from "../../redux/Modal/modal.actions";
 import useModal from "../../hooks/useModal";
 import useSortableData from "../../hooks/useSortableData";
 import ReactTooltip from "react-tooltip";
-const list = ["Type", "Forex", "Crypto"];
+const list = ["Limit", "Market", "Stop", "StopLimit", "Call", "Put"];
 
 const mapState = ({ trades }) => ({
   trades: trades.filteredTrades,
@@ -220,28 +220,15 @@ const MyTrades = (props) => {
                 </th>
                 <th
                   className="table_header"
-                  onClick={() => requestSort("entryPrice")}
+                  onClick={() => requestSort("price")}
                 >
                   <button className="btn--default bold" type="button">
-                    Entry Price{" "}
-                    <span className={getClassNamesFor("entryPrice")} />
-                  </button>
-                </th>
-                <th
-                  className="table_header"
-                  onClick={() => requestSort("stopLoss")}
-                >
-                  <button className="btn--default bold" type="button">
-                    Stop Loss <span className={getClassNamesFor("stopLoss")} />
+                    Price{" "}
+                    <span className={getClassNamesFor("price")} />
                   </button>
                 </th>
                 <th className="table_header">Notes</th>
                 <th className="table_header">Tags</th>
-                <th className="table_header" onClick={() => requestSort("net")}>
-                  <button className="btn--default bold" type="button">
-                    Profit <span className={getClassNamesFor("net")} />
-                  </button>
-                </th>
                 <th className="table_header">Options</th>
               </tr>
             </thead>

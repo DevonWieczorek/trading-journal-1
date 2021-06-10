@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.scss";
 
-const Input = ({ label, handler, placeholder, ...otherProps }) => {
+const Input = ({ label, handler, placeholder, type = "text", ...otherProps }) => {
   return (
     <>
       {label ? (
@@ -10,7 +10,7 @@ const Input = ({ label, handler, placeholder, ...otherProps }) => {
         </label>
       ) : null}
       <input
-        type="text"
+        type={type}
         className="input"
         placeholder={placeholder}
         onChange={handler}
